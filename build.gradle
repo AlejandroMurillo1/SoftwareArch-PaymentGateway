@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.zeroc.gradle.ice-builder.slice' version '1.5.2'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+group = 'com.apexstore'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.zeroc:ice:3.7.10'
+}
+
+slice {
+    iceHome = '/usr/local/opt/ice'
+}
+
+tasks.register('runFakeProcessor', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.apexstore.devtools.FakeProcessor'
+}
+
+tasks.register('runTestClient', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.apexstore.devtools.TestClient'
+}
+
+application {
+    mainClass = 'com.apexstore.Main'
+}
+
+run {
+    args '--Ice.Config=gateway.properties'
+}
+
+test {
+    useJUnitPlatform()
+}
